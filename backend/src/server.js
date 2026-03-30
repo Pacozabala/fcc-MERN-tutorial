@@ -11,6 +11,9 @@ const PORT = process.env.PORT || 5001;
 
 connectDB();
 
+// middleware that allows access to data passed as json
+app.use(express.json())
+
 // Endpoint: combo of URL + HTTP method that lets client interact with specific resource
 app.use("/api/notes", notesRoutes);
 
