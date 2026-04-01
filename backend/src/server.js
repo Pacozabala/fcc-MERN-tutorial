@@ -1,23 +1,37 @@
 // const express = require("express") -> syntax when type: "commonjs"
 import express from "express";
+import dotenv from "dotenv";
+
 import notesRoutes from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
-import dotenv from "dotenv";
+import rateLimiter from "./middleware/rateLimiter.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-connectDB();
+// middleware is stuff performed before getting a response, used through app.use()
+// use cases: authentication, rate limiting
 
-// middleware that allows access to data passed as json
+// this middleware parses JSON bodies: req.body
 app.use(express.json())
+
+app.use(rateLimiter);
 
 // Endpoint: combo of URL + HTTP method that lets client interact with specific resource
 app.use("/api/notes", notesRoutes);
 
-app.listen(PORT, () => {
-    console.log("Server started on PORT:", PORT);
+// connect to database first, then start listening on port
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("Server started on PORT:", PORT);
+    });
 });
 
+// -------------------------- NOTES --------------------------
+// simple response middleware
+// app.use((req,res,next) => {
+//     console.log(`Request method is ${req.method} & Request URL is ${req.url}`);
+//     next();
+// });
