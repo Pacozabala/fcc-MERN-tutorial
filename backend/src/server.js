@@ -1,6 +1,7 @@
 // const express = require("express") -> syntax when type: "commonjs"
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import notesRoutes from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
@@ -16,6 +17,11 @@ const PORT = process.env.PORT || 5001;
 
 // this middleware parses JSON bodies: req.body
 app.use(express.json())
+
+// middleware for getting rid of CORS error
+app.use(cors({
+    origin:"http://localhost:5173",
+}));
 
 app.use(rateLimiter);
 
